@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="4.7.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SearchMaster.Core\SearchMaster.Core.csproj" />
+    <ProjectReference Include="..\SearchMaster.DataAccess\SearchMaster.DataAccess.csproj" />
+    <ProjectReference Include="..\SearchMaster.Infrastructure\SearchMaster.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

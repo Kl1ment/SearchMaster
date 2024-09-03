@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+    postgres:
+        restart: always
+        container_name: postgresSearchMaster
+        image: postgres:latest
+        environment:
+            POSTGRES_DB: "SMDb"
+            POSTGRES_USER: "postgres"
+            POSTGRES_PASSWORD: "password"
+        ports:
+            - "5432:5432"
+
+volumes:
+    posrgres-data:   
