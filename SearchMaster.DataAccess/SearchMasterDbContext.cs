@@ -11,7 +11,6 @@ namespace SearchMaster.DataAccess
         public DbSet<WorkerEntity> Workers { get; set; }
         public DbSet<OrderEntity> Orders { get; set; }
         public DbSet<ReviewEntity> Reviews { get; set; }
-        public DbSet<CodeEntity> Codes { get; set; }
         public DbSet<RoleEntity> Roles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -21,7 +20,6 @@ namespace SearchMaster.DataAccess
             modelBuilder.ApplyConfiguration(new WorkerConfiguration());
             modelBuilder.ApplyConfiguration(new OrderConfiguration());
             modelBuilder.ApplyConfiguration(new ReviewConfiguration());
-            modelBuilder.ApplyConfiguration(new CodeConfiguration());
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
 
             base.OnModelCreating(modelBuilder);

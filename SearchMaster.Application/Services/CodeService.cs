@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using Microsoft.Extensions.Caching.Distributed;
 using SearchMaster.Core.Models;
 using SearchMaster.DataAccess.Repositories;
 using SearchMaster.Infrastructure;
@@ -7,12 +8,12 @@ namespace SearchMaster.Application.Services
 {
     public class CodeService(
         IHasher hasher,
-        ICodeRepository codeRepository,
+        IDistributedCache cache,
         IJwtProvider jwtProvider,
         IEmailService emailService) : ICodeService
     {
         private readonly IHasher _hasher = hasher;
-        private readonly ICodeRepository _codeRepository = codeRepository;
+        private readonly IDistributedCache _cache = cache;
         private readonly IJwtProvider _jwtProvider = jwtProvider;
         private readonly IEmailService _emailService = emailService;
 
@@ -22,11 +23,12 @@ namespace SearchMaster.Application.Services
 
             string codeHash = _hasher.Generate(codeNumber);
 
-            Code code = new(Guid.NewGuid(), codeHash);
+            string token = _jwtProvider.GenerateLoginToken(email);
 
-            string token = _jwtProvider.GenerateLoginToken(code.Id, email);
-
-            await _codeRepository.Add(code);
+            await _cache.SetStringAsync(email, codeHash, new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+            });
 
             Console.WriteLine(codeNumber);
             var htmlMessage = File.ReadAllText(Directory.GetCurrentDirectory() + "/Html/CodeMessage.html");
@@ -35,11 +37,11 @@ namespace SearchMaster.Application.Services
             return token;
         }
 
-        public async Task<IResult<string>> CheckEmailForLogin(Guid codeId, string code, Person person)
+        public async Task<IResult<string>> CheckEmailForLogin(string email, string code, Person person)
         {
-            var codeHash = await _codeRepository.Get(codeId);
+            var codeHash = await _cache.GetStringAsync(email);
 
-            if (codeHash == null || !_hasher.Verify(code, codeHash.CodeHash))
+            if (codeHash == null || !_hasher.Verify(code, codeHash))
             {
                 return Result.Failure<string>("Wrong code");
             }
@@ -49,11 +51,11 @@ namespace SearchMaster.Application.Services
             return Result.Success(token);
         }
 
-        public async Task<IResult<string>> CheckEmailForRegister(Guid codeId, string code, string email)
+        public async Task<IResult<string>> CheckEmailForRegister(string code, string email)
         {
-            var codeHash = await _codeRepository.Get(codeId);
+            var codeHash = await _cache.GetStringAsync(email);
 
-            if (codeHash == null || !_hasher.Verify(code, codeHash.CodeHash))
+            if (codeHash == null || !_hasher.Verify(code, codeHash))
             {
                 return Result.Failure<string>("Wrong code");
             }

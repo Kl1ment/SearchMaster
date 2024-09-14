@@ -116,13 +116,12 @@ namespace SearchMaster.Controllers
 
         private async Task<Result> ConfirmEmail(string code)
         {
-            string? codeId = HttpContext.User.FindFirstValue(Strings.CodeId);
             string? email = HttpContext.User.FindFirstValue(Strings.Email);
 
-            if (codeId == null || email == null)
+            if (email == null)
                 return Result.Failure("Wrong Code");
 
-            var result = await _emailService.CheckEmailForRegister(Guid.Parse(codeId), code, email);
+            var result = await _emailService.CheckEmailForRegister(code, email);
 
             if (result.IsFailure)
                 return Result.Failure(result.Error);

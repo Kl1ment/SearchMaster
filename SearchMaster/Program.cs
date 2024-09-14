@@ -14,6 +14,12 @@ services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 services.AddEndpointsApiExplorer();
 
+services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = configuration.GetConnectionString("Redis");
+    options.InstanceName = "Main";
+});
+
 services
     .AddApiAuthentication(configuration)
     .AddRepository(configuration)

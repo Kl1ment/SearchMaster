@@ -12,8 +12,8 @@ using SearchMaster.DataAccess;
 namespace SearchMaster.DataAccess.Migrations
 {
     [DbContext(typeof(SearchMasterDbContext))]
-    [Migration("20240824221410_AddRoles")]
-    partial class AddRoles
+    [Migration("20240914000250_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,21 +24,6 @@ namespace SearchMaster.DataAccess.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("SearchMaster.DataAccess.Entities.CodeEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CodeHash")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Codes");
-                });
 
             modelBuilder.Entity("SearchMaster.DataAccess.Entities.OrderEntity", b =>
                 {
@@ -57,8 +42,8 @@ namespace SearchMaster.DataAccess.Migrations
                         .HasMaxLength(350)
                         .HasColumnType("character varying(350)");
 
-                    b.Property<float>("Price")
-                        .HasColumnType("real");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -103,13 +88,7 @@ namespace SearchMaster.DataAccess.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.HasKey("Id");
-
-                    b.HasAlternateKey("Username");
 
                     b.HasIndex("RoleId");
 
@@ -122,13 +101,12 @@ namespace SearchMaster.DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("370887e2-1c12-400c-a87a-739998b451d9"),
+                            Id = new Guid("aab34123-cf30-41bb-bf6c-4e10d3e579dd"),
                             Email = "admin@gmail.com",
                             Name = "Климент",
                             Rating = 0f,
                             RoleId = 1,
-                            Surname = "Иванов",
-                            Username = "Admin"
+                            Surname = "Иванов"
                         });
                 });
 
@@ -233,6 +211,10 @@ namespace SearchMaster.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasDiscriminator().HasValue("WorkerEntity");
                 });
 
@@ -249,13 +231,13 @@ namespace SearchMaster.DataAccess.Migrations
 
             modelBuilder.Entity("SearchMaster.DataAccess.Entities.PersonEntity", b =>
                 {
-                    b.HasOne("SearchMaster.DataAccess.Entities.RoleEntity", "RoleEntities")
+                    b.HasOne("SearchMaster.DataAccess.Entities.RoleEntity", "RoleEntity")
                         .WithMany("Persons")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("RoleEntities");
+                    b.Navigation("RoleEntity");
                 });
 
             modelBuilder.Entity("SearchMaster.DataAccess.Entities.ReviewEntity", b =>

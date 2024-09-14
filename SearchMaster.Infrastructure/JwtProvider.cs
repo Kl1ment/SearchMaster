@@ -13,10 +13,9 @@ namespace SearchMaster.Infrastructure
     {
         private readonly JwtOptions _options = options.Value;
 
-        public string GenerateLoginToken(Guid codeId, string email)
+        public string GenerateLoginToken(string email)
         {
             Claim[] claims = [
-                new(Strings.CodeId, codeId.ToString()),
                 new(ClaimsIdentity.DefaultRoleClaimType, Roles.ConfirmingEmail.ToString()),
                 new(Strings.Email, email),
             ];

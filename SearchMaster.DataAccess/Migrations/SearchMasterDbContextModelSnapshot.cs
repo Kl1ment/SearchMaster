@@ -22,21 +22,6 @@ namespace SearchMaster.DataAccess.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("SearchMaster.DataAccess.Entities.CodeEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CodeHash")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Codes", (string)null);
-                });
-
             modelBuilder.Entity("SearchMaster.DataAccess.Entities.OrderEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -66,7 +51,7 @@ namespace SearchMaster.DataAccess.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("SearchMaster.DataAccess.Entities.PersonEntity", b =>
@@ -104,7 +89,7 @@ namespace SearchMaster.DataAccess.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Persons", (string)null);
+                    b.ToTable("Persons");
 
                     b.HasDiscriminator().HasValue("PersonEntity");
 
@@ -113,7 +98,7 @@ namespace SearchMaster.DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("bedc8788-b094-416b-9eb3-18c608ae93be"),
+                            Id = new Guid("aab34123-cf30-41bb-bf6c-4e10d3e579dd"),
                             Email = "admin@gmail.com",
                             Name = "Климент",
                             Rating = 0f,
@@ -151,7 +136,7 @@ namespace SearchMaster.DataAccess.Migrations
 
                     b.HasIndex("WriterId");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("SearchMaster.DataAccess.Entities.RoleEntity", b =>
@@ -168,7 +153,7 @@ namespace SearchMaster.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
 
                     b.HasData(
                         new

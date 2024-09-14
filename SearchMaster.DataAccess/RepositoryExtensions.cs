@@ -19,7 +19,6 @@ namespace SearchMaster.DataAccess
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IReviewRepository, ReviewRepository>();
             services.AddScoped<IWorkerRepository, WorkerRepository>();
-            services.AddScoped<ICodeRepository, CodeRepository>();
 
             return services;
         }

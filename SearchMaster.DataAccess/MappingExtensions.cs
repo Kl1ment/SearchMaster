@@ -81,15 +81,6 @@ namespace SearchMaster.DataAccess
             };
         }
 
-        public static CodeEntity MapToEntity(this Code code)
-        {
-            return new CodeEntity
-            {
-                Id = code.Id,
-                CodeHash = code.CodeHash,
-            };
-        }
-
         public static Person MapToModel(this PersonEntity personEntity)
         {
             return new Person(
@@ -157,13 +148,6 @@ namespace SearchMaster.DataAccess
                 reviewEntity.CreatedDate,
                 reviewEntity.Holder?.MapToModel(),
                 reviewEntity.HolderId);
-        }
-
-        public static Code MapToModel(this CodeEntity codeEntity)
-        {
-            return new Code(
-                codeEntity.Id,
-                codeEntity.CodeHash);
         }
     }
 }
