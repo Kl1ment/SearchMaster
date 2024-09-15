@@ -13,11 +13,12 @@ namespace SearchMaster.Infrastructure
     {
         private readonly JwtOptions _options = options.Value;
 
-        public string GenerateLoginToken(string email)
+        public string GenerateLoginToken(string codeId, string email)
         {
             Claim[] claims = [
                 new(ClaimsIdentity.DefaultRoleClaimType, Roles.ConfirmingEmail.ToString()),
                 new(Strings.Email, email),
+                new(Strings.CodeId, codeId)
             ];
 
             DateTime dateTime = DateTime.UtcNow.AddMinutes(_options.ExpiresMinutes);

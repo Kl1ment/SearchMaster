@@ -37,9 +37,10 @@ namespace SearchMaster.Controllers
         [Authorize(Roles = nameof(Roles.ConfirmingEmail))]
         public async Task<ActionResult> ClientConfirmEmail([FromBody] string code)
         {
-            string? email = HttpContext.User.FindFirstValue("Email");
+            string? email = HttpContext.User.FindFirstValue(Strings.Email);
+            string? codeId = HttpContext.User.FindFirstValue(Strings.CodeId);
 
-            if (email == null)
+            if (email == null || codeId == null)
                 return BadRequest("Wrong Code");
 
             var client = await _clientService.GetClientByEmail(email);
@@ -47,7 +48,7 @@ namespace SearchMaster.Controllers
             if (client.IsFailure)
                 return BadRequest(client.Error);
 
-            var token = await _emailService.CheckEmailForLogin(email, code, client.Value);
+            var token = await _emailService.CheckEmailForLogin(codeId, code, client.Value);
 
             if (token.IsFailure)
                 return BadRequest(token.Error);
@@ -76,9 +77,10 @@ namespace SearchMaster.Controllers
         [Authorize(Roles = nameof(Roles.ConfirmingEmail))]
         public async Task<ActionResult> WorkerConfirmEmail([FromBody] string code)
         {
-            string? email = HttpContext.User.FindFirstValue("Email");
+            string? email = HttpContext.User.FindFirstValue(Strings.Email);
+            string? codeId = HttpContext.User.FindFirstValue(Strings.CodeId);
 
-            if (email == null)
+            if (email == null || codeId == null)
                 return BadRequest("Wrong Code");
 
             var worker = await _workerService.GetWorkerByEmail(email);
@@ -86,7 +88,7 @@ namespace SearchMaster.Controllers
             if (worker.IsFailure)
                 return BadRequest(worker.Error);
 
-            var token = await _emailService.CheckEmailForLogin(email, code, worker.Value);
+            var token = await _emailService.CheckEmailForLogin(codeId, code, worker.Value);
 
             if (token.IsFailure)
                 return BadRequest(token.Error);

@@ -1,7 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using Microsoft.Extensions.Caching.Distributed;
 using SearchMaster.Core.Models;
-using SearchMaster.DataAccess.Repositories;
 using SearchMaster.Infrastructure;
 
 namespace SearchMaster.Application.Services
@@ -19,46 +18,52 @@ namespace SearchMaster.Application.Services
 
         public async Task<string> SendCode(string email)
         {
-            string codeNumber = new Random().Next(1000, 9999).ToString();
+            string code = new Random().Next(1000, 9999).ToString();
 
-            string codeHash = _hasher.Generate(codeNumber);
+            var codeId = Guid.NewGuid().ToString();
 
-            string token = _jwtProvider.GenerateLoginToken(email);
+            string codeHash = _hasher.Generate(code);
 
-            await _cache.SetStringAsync(email, codeHash, new DistributedCacheEntryOptions
+            string token = _jwtProvider.GenerateLoginToken(codeId, email);
+
+            await _cache.SetStringAsync(codeId, codeHash, new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
             });
 
-            Console.WriteLine(codeNumber);
+            Console.WriteLine(code);
             var htmlMessage = File.ReadAllText(Directory.GetCurrentDirectory() + "/Html/CodeMessage.html");
-            await _emailService.SendEmail(email, "Check Email", string.Format(htmlMessage, codeNumber));
+            await _emailService.SendEmail(email, "Check Email", string.Format(htmlMessage, code));
 
             return token;
         }
 
-        public async Task<IResult<string>> CheckEmailForLogin(string email, string code, Person person)
+        public async Task<IResult<string>> CheckEmailForLogin(string codeId, string code, Person person)
         {
-            var codeHash = await _cache.GetStringAsync(email);
+            var codeHash = await _cache.GetStringAsync(codeId);
 
             if (codeHash == null || !_hasher.Verify(code, codeHash))
             {
                 return Result.Failure<string>("Wrong code");
             }
+
+            await _cache.RemoveAsync(codeId);
 
             string token = _jwtProvider.GenerateToken(person);
 
             return Result.Success(token);
         }
 
-        public async Task<IResult<string>> CheckEmailForRegister(string code, string email)
+        public async Task<IResult<string>> CheckEmailForRegister(string codeId, string code, string email)
         {
-            var codeHash = await _cache.GetStringAsync(email);
+            var codeHash = await _cache.GetStringAsync(codeId);
 
             if (codeHash == null || !_hasher.Verify(code, codeHash))
             {
                 return Result.Failure<string>("Wrong code");
             }
+
+            await _cache.RemoveAsync(codeId);
 
             string token = _jwtProvider.GenerateRegistrationToken(email);
 
