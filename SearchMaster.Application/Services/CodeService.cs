@@ -2,19 +2,18 @@
 using Microsoft.Extensions.Caching.Distributed;
 using SearchMaster.Core.Models;
 using SearchMaster.Infrastructure;
+using System.Net.Http.Json;
 
 namespace SearchMaster.Application.Services
 {
     public class CodeService(
         IHasher hasher,
         IDistributedCache cache,
-        IJwtProvider jwtProvider,
-        IEmailService emailService) : ICodeService
+        IJwtProvider jwtProvider) : ICodeService
     {
         private readonly IHasher _hasher = hasher;
         private readonly IDistributedCache _cache = cache;
         private readonly IJwtProvider _jwtProvider = jwtProvider;
-        private readonly IEmailService _emailService = emailService;
 
         public async Task<string> SendCode(string email)
         {
@@ -33,7 +32,17 @@ namespace SearchMaster.Application.Services
 
             Console.WriteLine(code);
             var htmlMessage = File.ReadAllText(Directory.GetCurrentDirectory() + "/Html/CodeMessage.html");
-            await _emailService.SendEmail(email, "Check Email", string.Format(htmlMessage, code));
+
+            using (var httpClient = new HttpClient())
+            {
+                await httpClient.PostAsJsonAsync("http://localhost:8000/SendEmail", new
+                {
+                    sender = "SearchMaster",
+                    emailAddress = email,
+                    subject = "Confirm Email",
+                    message = string.Format(htmlMessage, code)
+                });
+            }
 
             return token;
         }

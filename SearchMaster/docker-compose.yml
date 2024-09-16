@@ -16,5 +16,11 @@ services:
         image: redis
         ports:
             - "6379:6379"
+
+    emailservice:
+        container_name: EmailService.API
+        image: emailserviceapi
+        ports:
+            - "8000:8080"
 # volumes:
 #     posrgres-data:   

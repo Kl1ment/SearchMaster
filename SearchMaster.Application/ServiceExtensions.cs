@@ -13,7 +13,6 @@ namespace SearchMaster.Application
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IReviewService, ReviewService>();
             services.AddScoped<ICodeService, CodeService>();
-            services.AddScoped<IEmailService, EmailService>();
 
             return services;
         }
