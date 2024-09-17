@@ -1,0 +1,3 @@
+[submodule "SearchMaster.EmailService"]
+	path = SearchMaster.EmailService
+	url = https://github.com/Kl1ment/SearchMaster.EmailService
